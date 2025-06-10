@@ -1,0 +1,452 @@
+{
+  "courses": [
+    {
+      "id": 1,
+      "title": "Year 1: Conversational Arabic (Beginner)",
+      "description": "Build basic conversational skills for everyday situations. Learn essential vocabulary, greetings, and introductions.",
+      "level": "Beginner",
+      "year": 1,
+      "duration": "12 months",
+      "totalHours": 300,
+      "unitsCount": 3,
+      "assessmentsPerUnit": 2,
+      "certification": "Fajr.com Certified",
+      "image": "/placeholder.svg?height=300&width=400",
+      "price": "Free",
+      "originalPrice": null,
+      "lessons": 36,
+      "rating": 4.8,
+      "reviews": 1250,
+      "students": 1250,
+      "features": ["Interactive Lessons", "Practice Exercises", "Progress Tracking", "Certificate"],
+      "requirements": ["No prior knowledge required", "Basic computer skills", "Dedication to learn"],
+      "outcomes": ["Build basic conversational skills", "Learn essential vocabulary", "Gain confidence in speaking"],
+      "enrolled": true,
+      "progress": 25,
+      "instructor": {
+        "name": "Dr. Amina Hassan",
+        "title": "Arabic Language Specialist",
+        "avatar": "/placeholder.svg?height=100&width=100",
+        "experience": "12+ years",
+        "rating": 4.9,
+        "bio": "Dr. Amina Hassan is an expert in Arabic linguistics and has taught over 1,000 students worldwide.",
+        "students": 1250
+      },
+      "learningOutcomes": [
+        "Build basic conversational skills for everyday situations",
+        "Learn essential vocabulary, greetings, and introductions",
+        "Gain confidence in introducing yourself, family, and asking simple questions",
+        "Begin understanding simple dialogues and responding with basic sentences"
+      ],
+      "units": [
+        {
+          "id": 1,
+          "title": "Unit 1: Arabic Alphabet & Basic Sounds",
+          "description": "Master the Arabic alphabet, letter forms, and pronunciation",
+          "hours": 50,
+          "locked": false,
+          "completed": false,
+          "progress": 0,
+          "modules": [
+            {
+              "id": 1,
+              "title": "Arabic Script Introduction",
+              "type": "video",
+              "duration": "25 min",
+              "completed": false,
+              "locked": false
+            },
+            {
+              "id": 2,
+              "title": "Letters Alif to Jeem",
+              "type": "interactive",
+              "duration": "45 min",
+              "completed": false,
+              "locked": true
+            },
+            {
+              "id": 3,
+              "title": "Letters Haa to Seen",
+              "type": "interactive",
+              "duration": "45 min",
+              "completed": false,
+              "locked": true
+            },
+            {
+              "id": 4,
+              "title": "Letters Sheen to Qaaf",
+              "type": "interactive",
+              "duration": "45 min",
+              "completed": false,
+              "locked": true
+            },
+            {
+              "id": 5,
+              "title": "Letters Kaaf to Yaa",
+              "type": "interactive",
+              "duration": "45 min",
+              "completed": false,
+              "locked": true
+            },
+            {
+              "id": 6,
+              "title": "Writing Practice",
+              "type": "practice",
+              "duration": "60 min",
+              "completed": false,
+              "locked": true
+            }
+          ],
+          "assessments": [
+            {
+              "id": 1,
+              "title": "Alphabet Recognition Test",
+              "type": "quiz",
+              "questions": 25,
+              "duration": "30 min",
+              "locked": true
+            },
+            {
+              "id": 2,
+              "title": "Writing Assessment",
+              "type": "practical",
+              "questions": 15,
+              "duration": "45 min",
+              "locked": true
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "title": "Unit 2: Basic Vocabulary & Greetings",
+          "description": "Learn essential vocabulary for daily interactions and proper greetings",
+          "hours": 50,
+          "locked": true,
+          "completed": false,
+          "progress": 0,
+          "modules": [
+            {
+              "id": 7,
+              "title": "Common Greetings",
+              "type": "video",
+              "duration": "30 min",
+              "completed": false,
+              "locked": true
+            },
+            {
+              "id": 8,
+              "title": "Family Members",
+              "type": "interactive",
+              "duration": "40 min",
+              "completed": false,
+              "locked": true
+            },
+            {
+              "id": 9,
+              "title": "Numbers 1-100",
+              "type": "interactive",
+              "duration": "50 min",
+              "completed": false,
+              "locked": true
+            },
+            {
+              "id": 10,
+              "title": "Days & Months",
+              "type": "interactive",
+              "duration": "35 min",
+              "completed": false,
+              "locked": true
+            },
+            {
+              "id": 11,
+              "title": "Basic Conversation Practice",
+              "type": "conversation",
+              "duration": "45 min",
+              "completed": false,
+              "locked": true
+            }
+          ],
+          "assessments": [
+            {
+              "id": 3,
+              "title": "Vocabulary Test",
+              "type": "quiz",
+              "questions": 30,
+              "duration": "25 min",
+              "locked": true
+            },
+            {
+              "id": 4,
+              "title": "Speaking Assessment",
+              "type": "speaking",
+              "questions": 10,
+              "duration": "20 min",
+              "locked": true
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "title": "Unit 3: Simple Conversations",
+          "description": "Practice basic conversations and introductions",
+          "hours": 50,
+          "locked": true,
+          "completed": false,
+          "progress": 0,
+          "modules": [
+            {
+              "id": 12,
+              "title": "Introducing Yourself",
+              "type": "video",
+              "duration": "25 min",
+              "completed": false,
+              "locked": true
+            },
+            {
+              "id": 13,
+              "title": "Asking Questions",
+              "type": "interactive",
+              "duration": "40 min",
+              "completed": false,
+              "locked": true
+            },
+            {
+              "id": 14,
+              "title": "Describing People",
+              "type": "interactive",
+              "duration": "45 min",
+              "completed": false,
+              "locked": true
+            },
+            {
+              "id": 15,
+              "title": "Simple Dialogues",
+              "type": "conversation",
+              "duration": "50 min",
+              "completed": false,
+              "locked": true
+            }
+          ],
+          "assessments": [
+            {
+              "id": 5,
+              "title": "Conversation Test",
+              "type": "speaking",
+              "questions": 15,
+              "duration": "30 min",
+              "locked": true
+            },
+            {
+              "id": 6,
+              "title": "Listening Comprehension",
+              "type": "listening",
+              "questions": 20,
+              "duration": "25 min",
+              "locked": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "title": "Year 2: Fluency in Daily Life (Lower-Intermediate)",
+      "description": "Hold conversations in common situations and develop listening and speaking for day-to-day activities.",
+      "level": "Lower-Intermediate",
+      "year": 2,
+      "duration": "12 months",
+      "totalHours": 300,
+      "unitsCount": 3,
+      "assessmentsPerUnit": 2,
+      "certification": "Fajr.com Certified",
+      "image": "/placeholder.svg?height=300&width=400",
+      "instructor": {
+        "name": "Prof. Omar Al-Rashid",
+        "title": "Conversational Arabic Expert",
+        "avatar": "/placeholder.svg?height=100&width=100",
+        "experience": "15+ years",
+        "rating": 4.8,
+        "bio": "Prof. Omar Al-Rashid is a renowned Arabic linguist and has published several books on Arabic grammar and conversation."
+      },
+      "learningOutcomes": [
+        "Hold conversations in common situations (shopping, travel, family, work)",
+        "Develop listening and speaking for day-to-day activities",
+        "Learn present tense grammar, verbs, and forming sentences",
+        "Start reading short paragraphs and simple stories"
+      ],
+      "units": [
+        {
+          "id": 4,
+          "title": "Unit 4: Shopping & Daily Activities",
+          "description": "Learn vocabulary and phrases for shopping and daily routines",
+          "hours": 50,
+          "locked": true,
+          "completed": false,
+          "progress": 0,
+          "modules": [],
+          "assessments": []
+        },
+        {
+          "id": 5,
+          "title": "Unit 5: Travel & Transportation",
+          "description": "Master travel-related vocabulary and transportation terms",
+          "hours": 50,
+          "locked": true,
+          "completed": false,
+          "progress": 0,
+          "modules": [],
+          "assessments": []
+        },
+        {
+          "id": 6,
+          "title": "Unit 6: Present Tense Grammar",
+          "description": "Understand and use present tense verbs in context",
+          "hours": 50,
+          "locked": true,
+          "completed": false,
+          "progress": 0,
+          "modules": [],
+          "assessments": []
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "title": "Year 3: Grammar Mastery & Storytelling (Intermediate)",
+      "description": "Understand past and future tenses, build vocabulary, and learn to narrate personal stories.",
+      "level": "Intermediate",
+      "year": 3,
+      "duration": "12 months",
+      "totalHours": 300,
+      "unitsCount": 3,
+      "assessmentsPerUnit": 2,
+      "certification": "Fajr.com Certified",
+      "image": "/placeholder.svg?height=300&width=400",
+      "instructor": {
+        "name": "Dr. Fatima Al-Zahra",
+        "title": "Arabic Grammar Specialist",
+        "avatar": "/placeholder.svg?height=100&width=100",
+        "experience": "18+ years",
+        "rating": 4.9,
+        "bio": "Dr. Fatima Al-Zahra is a renowned Arabic linguist and has published several books on Arabic grammar and conversation."
+      },
+      "learningOutcomes": [
+        "Understand past and future tenses, plurals, and adjectives",
+        "Build vocabulary for daily tasks, hobbies, and interests",
+        "Learn to narrate personal stories and describe events in detail",
+        "Read and summarise short articles and stories"
+      ],
+      "units": []
+    },
+    {
+      "id": 4,
+      "title": "Year 4: Complex Sentences & Writing Skills (Upper-Intermediate)",
+      "description": "Develop writing abilities and understand complex sentence structures.",
+      "level": "Upper-Intermediate",
+      "year": 4,
+      "duration": "12 months",
+      "totalHours": 300,
+      "unitsCount": 3,
+      "assessmentsPerUnit": 2,
+      "certification": "Fajr.com Certified",
+      "image": "/placeholder.svg?height=300&width=400",
+      "instructor": {
+        "name": "Prof. Ahmed Khalil",
+        "title": "Arabic Writing Expert",
+        "avatar": "/placeholder.svg?height=100&width=100",
+        "experience": "20+ years",
+        "rating": 4.8,
+        "bio": "Prof. Ahmed Khalil is a renowned Arabic linguist and has published several books on Arabic grammar and conversation."
+      },
+      "learningOutcomes": [
+        "Develop the ability to write short essays and letters",
+        "Understand complex sentence structures, connectors, and transitions",
+        "Explore topics like culture, religion, and society",
+        "Engage in longer conversations and group discussions"
+      ],
+      "units": []
+    },
+    {
+      "id": 5,
+      "title": "Year 5: Advanced Reading, Debating & Critical Thinking (Advanced)",
+      "description": "Read and analyse texts, participate in debates, and develop critical thinking skills.",
+      "level": "Advanced",
+      "year": 5,
+      "duration": "12 months",
+      "totalHours": 300,
+      "unitsCount": 3,
+      "assessmentsPerUnit": 2,
+      "certification": "Fajr.com Certified",
+      "image": "/placeholder.svg?height=300&width=400",
+      "instructor": {
+        "name": "Dr. Layla Mansour",
+        "title": "Advanced Arabic Studies",
+        "avatar": "/placeholder.svg?height=100&width=100",
+        "experience": "22+ years",
+        "rating": 4.9,
+        "bio": "Dr. Layla Mansour is a renowned Arabic linguist and has published several books on Arabic grammar and conversation."
+      },
+      "learningOutcomes": [
+        "Read and analyse intermediate-level texts, articles, and news",
+        "Participate in debates, discussions, and formal conversations",
+        "Learn argumentation, persuasion, and expressing opinions in Arabic",
+        "Gain confidence in formal and informal speech"
+      ],
+      "units": []
+    },
+    {
+      "id": 6,
+      "title": "Year 6: Mastery & Specialisation (Proficient)",
+      "description": "Achieve full fluency and specialise in areas of interest.",
+      "level": "Proficient",
+      "year": 6,
+      "duration": "12 months",
+      "totalHours": 300,
+      "unitsCount": 3,
+      "assessmentsPerUnit": 2,
+      "certification": "Fajr.com Certified",
+      "image": "/placeholder.svg?height=300&width=400",
+      "instructor": {
+        "name": "Sheikh Abdullah Rahman",
+        "title": "Arabic Mastery Specialist",
+        "avatar": "/placeholder.svg?height=100&width=100",
+        "experience": "25+ years",
+        "rating": 5.0,
+        "bio": "Sheikh Abdullah Rahman is a renowned Arabic linguist and has published several books on Arabic grammar and conversation."
+      },
+      "learningOutcomes": [
+        "Achieve full fluency in understanding, speaking, reading, and writing",
+        "Specialise in areas of interest: Islamic studies, business Arabic, travel, etc.",
+        "Engage with native content: lectures, videos, and advanced texts",
+        "Prepare for accredited certification by Fajr as a fluent Arabic speaker"
+      ],
+      "units": []
+    }
+  ],
+  "userProgress": {
+    "currentCourse": 1,
+    "currentUnit": 1,
+    "currentModule": 1,
+    "totalHoursCompleted": 12,
+    "streak": 7,
+    "level": 3,
+    "xp": 1250,
+    "certificates": [],
+    "achievements": [
+      {
+        "id": 1,
+        "title": "First Steps",
+        "description": "Completed your first lesson",
+        "icon": "🎯",
+        "unlockedAt": "2024-01-15"
+      },
+      {
+        "id": 2,
+        "title": "Week Warrior",
+        "description": "7-day learning streak",
+        "icon": "🔥",
+        "unlockedAt": "2024-01-22"
+      }
+    ]
+  }
+}
