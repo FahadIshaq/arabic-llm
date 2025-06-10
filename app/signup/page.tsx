@@ -185,7 +185,7 @@ export default function SignupPage() {
                             <p className="text-sm text-gray-600">I'm new to Arabic or know very little</p>
                           </div>
                         </div>
-                        <div className="flex items-center space-x-3 rounded-lg border p-4 hover:bg-gray-50 cursor-pointer">
+                        {/* <div className="flex items-center space-x-3 rounded-lg border p-4 hover:bg-gray-50 cursor-pointer">
                           <RadioGroupItem value="intermediate" id="intermediate" />
                           <div className="flex-1">
                             <Label htmlFor="intermediate" className="font-medium cursor-pointer">
@@ -202,7 +202,7 @@ export default function SignupPage() {
                             </Label>
                             <p className="text-sm text-gray-600">I can have conversations but want to improve</p>
                           </div>
-                        </div>
+                        </div> */}
                       </RadioGroup>
                     </div>
 
