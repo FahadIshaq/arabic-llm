@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { BookOpen, Clock, Users, Star, Play, CheckCircle, Filter, Search } from "lucide-react"
 import { Input } from "@/components/ui/input"
-import DashboardHeader from "@/components/dashboard-header"
+import { DashboardHeader } from "@/components/dashboard-header"
 import { ProtectedRoute } from "@/components/protected-route"
 import coursesData from "@/data/courses.json"
 
@@ -154,15 +154,15 @@ export default function CoursesPage() {
 
                         <CardContent className="pt-0">
                           <div className="space-y-4">
-                            <div className="text-sm text-muted-foreground">By {course.instructor}</div>
+                            <div className="text-sm text-muted-foreground">By {course.instructor.name}</div>
 
                             <div className="flex flex-wrap gap-1">
-                              {course.features.slice(0, 3).map((feature, index) => (
+                              {course?.features?.slice(0, 3).map((feature, index) => (
                                 <Badge key={index} variant="outline" className="text-xs">
                                   {feature}
                                 </Badge>
                               ))}
-                              {course.features.length > 3 && (
+                              {course?.features && course.features.length > 3 && (
                                 <Badge variant="outline" className="text-xs">
                                   +{course.features.length - 3} more
                                 </Badge>
@@ -182,7 +182,7 @@ export default function CoursesPage() {
                             <div className="flex items-center justify-between">
                               <div className="flex items-center gap-1 text-sm text-muted-foreground">
                                 <Users className="h-4 w-4" />
-                                {course.students.toLocaleString()} students
+                                {course?.students?.toLocaleString() ?? 0} students
                               </div>
 
                               {course.enrolled ? (
