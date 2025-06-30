@@ -1,31 +1,64 @@
+"use client"
+
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { ArrowRight, BookOpen, Users, BarChart3, Shield, Globe, Headphones, Check } from "lucide-react"
-import MobileMenu from "@/components/mobile-menu"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import {
+  ArrowRight,
+  Users,
+  BarChart3,
+  Shield,
+  Globe,
+  Headphones,
+  BookOpen,
+  Menu,
+  X,
+  Check,
+} from "lucide-react"
+import { useApp } from "@/contexts/AppContext"
+import { useState } from "react"
 
 export default function ForBusinessPage() {
+  const { user, logout } = useApp()
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+    } catch (error) {
+      console.error('Logout failed:', error);
+    }
+  };
+
   return (
     <div className="flex min-h-screen flex-col">
       <header className="sticky top-0 z-50 w-full border-b bg-primary text-primary-foreground">
         <div className="container flex h-16 items-center justify-between">
           <div className="flex items-center gap-2">
-            <BookOpen className="h-6 w-6" />
-            <span className="text-xl font-bold">ArabicAI</span>
+            <Link href="/" className="flex items-center gap-2">
+              <BookOpen className="h-6 w-6" />
+              <span className="text-xl font-bold">ArabicAI</span>
+            </Link>
           </div>
           <nav className="hidden md:flex items-center gap-6">
-            <Link href="/" className="text-sm font-medium text-primary-foreground/90 hover:text-primary-foreground">
-              Home
-            </Link>
             <Link
-              href="/lessons"
+              href="/pricing"
               className="text-sm font-medium text-primary-foreground/90 hover:text-primary-foreground"
             >
-              Learning
+              Pricing
             </Link>
             <Link
               href="/for-business"
-              className="text-sm font-medium text-primary-foreground hover:text-primary-foreground"
+              className="text-sm font-medium text-primary-foreground"
             >
               For Business
             </Link>
@@ -37,19 +70,111 @@ export default function ForBusinessPage() {
             </Link>
           </nav>
           <div className="flex items-center gap-2 sm:gap-4">
-            <Link href="/login" className="hidden sm:block">
-              <Button variant="ghost" size="sm" className="text-primary-foreground/90 hover:text-primary-foreground">
-                Log In
-              </Button>
-            </Link>
+            {user ? (
+              // User is signed in - show user menu
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" className="relative h-8 w-8 rounded-full text-primary-foreground">
+                    <Avatar className="h-8 w-8">
+                      <AvatarImage src={user?.avatar || ""} alt={user?.fullName || "User Avatar"} />
+                      <AvatarFallback>{user?.fullName?.charAt(0).toUpperCase() || "U"}</AvatarFallback>
+                    </Avatar>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-56" align="end" forceMount>
+                  <DropdownMenuLabel className="font-normal">
+                    <div className="flex flex-col space-y-1">
+                      <p className="text-sm font-medium leading-none">{user?.fullName || "User Name"}</p>
+                      <p className="text-xs leading-none text-muted-foreground">{user?.email || "user@example.com"}</p>
+                    </div>
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem>
+                    <Link href="/dashboard" className="flex items-center space-x-2">
+                      Dashboard
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem>
+                    <Link href="/profile" className="flex items-center space-x-2">
+                      Profile
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem>
+                    <Link href="/settings" className="flex items-center space-x-2">
+                      Settings
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={handleLogout}>
+                    <span>Log out</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              // User is not signed in - show Log In button
+              <Link href="/login" className="hidden sm:block">
+                <Button variant="ghost" size="sm" className="text-primary-foreground/90 hover:text-primary-foreground">
+                  Log In
+                </Button>
+              </Link>
+            )}
             <Link href="/contact">
               <Button variant="secondary" size="sm" className="text-secondary-foreground hover:bg-secondary/90">
                 Contact Sales
               </Button>
             </Link>
-            <MobileMenu />
+            <button className="md:hidden p-2" onClick={() => setIsMenuOpen(!isMenuOpen)}>
+              {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
           </div>
         </div>
+
+        {/* Mobile Menu */}
+        {isMenuOpen && (
+          <div className="md:hidden bg-primary border-t border-primary-foreground/20">
+            <div className="container py-4 space-y-4">
+              <Link href="/pricing" className="block text-sm font-medium text-primary-foreground/90 hover:text-primary-foreground">
+                Pricing
+              </Link>
+              <Link href="/for-business" className="block text-sm font-medium text-primary-foreground">
+                For Business
+              </Link>
+              <Link href="/for-education" className="block text-sm font-medium text-primary-foreground/90 hover:text-primary-foreground">
+                For Education
+              </Link>
+              {user ? (
+                <div className="space-y-4">
+                  <div className="flex items-center space-x-3 p-3 bg-primary-foreground/10 rounded-lg">
+                    <Avatar className="h-8 w-8">
+                      <AvatarImage src={user?.avatar || ""} alt={user?.fullName || "User Avatar"} />
+                      <AvatarFallback>{user?.fullName?.charAt(0).toUpperCase() || "U"}</AvatarFallback>
+                    </Avatar>
+                    <div>
+                      <p className="text-sm font-medium text-primary-foreground">{user?.fullName || "User Name"}</p>
+                      <p className="text-xs text-primary-foreground/70">{user?.email || "user@example.com"}</p>
+                    </div>
+                  </div>
+                  <Link href="/dashboard" className="block text-sm font-medium text-primary-foreground/90 hover:text-primary-foreground">
+                    Dashboard
+                  </Link>
+                  <Link href="/profile" className="block text-sm font-medium text-primary-foreground/90 hover:text-primary-foreground">
+                    Profile
+                  </Link>
+                  <Link href="/settings" className="block text-sm font-medium text-primary-foreground/90 hover:text-primary-foreground">
+                    Settings
+                  </Link>
+                  <Button onClick={handleLogout} variant="outline" size="sm" className="w-full text-primary-foreground">
+                    Log out
+                  </Button>
+                </div>
+              ) : (
+                <Link href="/login" className="block text-sm font-medium text-primary-foreground/90 hover:text-primary-foreground">
+                  Log In
+                </Link>
+              )}
+            </div>
+          </div>
+        )}
       </header>
 
       <main className="flex-1">

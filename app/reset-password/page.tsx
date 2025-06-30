@@ -1,31 +1,53 @@
 "use client"
-import Link from "next/link"
-import type React from "react"
 
+import { useState } from "react"
+import { useRouter, useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { BookOpen, ArrowLeft, Loader2 } from "lucide-react"
-import { useState } from "react"
-import { useApp } from "@/contexts/AppContext";
+import Link from "next/link"
+import { Loader2, ArrowLeft, BookOpen } from "lucide-react"
+import { useApp } from "@/contexts/AppContext"
 
-export default function ForgotPasswordPage() {
-  const [email, setEmail] = useState("")
-  const [message, setMessage] = useState("")
+export default function ResetPasswordPage() {
+  const [password, setPassword] = useState("")
+  const [confirmPassword, setConfirmPassword] = useState("")
+  const [error, setError] = useState("")
+  const [success, setSuccess] = useState("")
   const [isLoading, setIsLoading] = useState(false)
-  const { forgotPassword } = useApp()
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  const { resetPassword } = useApp()
+
+  const token = searchParams.get("token") || ""
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    setError("")
+    setSuccess("")
+
+    if (!token) {
+      setError("Invalid or missing reset token.")
+      return
+    }
+    if (password.length < 6) {
+      setError("Password must be at least 6 characters long.")
+      return
+    }
+    if (password !== confirmPassword) {
+      setError("Passwords do not match.")
+      return
+    }
     setIsLoading(true)
-    setMessage("")
-    
     try {
-      await forgotPassword(email)
-      setMessage("If your email exists in our system, a password reset link has been sent.")
-    } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Failed to send reset link")
+      await resetPassword(token, password)
+      setSuccess("Password reset successfully! Redirecting to login...")
+      setTimeout(() => {
+        router.push("/login?reset=1")
+      }, 2000)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to reset password.")
     } finally {
       setIsLoading(false)
     }
@@ -47,14 +69,6 @@ export default function ForgotPasswordPage() {
               <span className="text-xl font-bold">ArabicAI</span>
             </div>
           </div>
-          <div className="flex items-center gap-4">
-            <div className="text-sm text-muted-foreground">
-              Remember your password?{" "}
-              <Link href="/login" className="text-teal-600 hover:underline">
-                Log in
-              </Link>
-            </div>
-          </div>
         </div>
       </header>
       <main className="flex-1 flex items-center justify-center py-12">
@@ -62,27 +76,37 @@ export default function ForgotPasswordPage() {
           <Card className="w-full max-w-md">
             <CardHeader className="space-y-1">
               <CardTitle className="text-2xl font-bold">Reset your password</CardTitle>
-              <CardDescription>
-                Enter your email address and we'll send you a link to reset your password
-              </CardDescription>
+              <CardDescription>Enter your new password below.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
+                  <Label htmlFor="password">New Password</Label>
                   <Input
-                    id="email"
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="m@example.com"
+                    id="password"
+                    type="password"
+                    value={password}
+                    onChange={e => setPassword(e.target.value)}
+                    placeholder="Enter new password"
                     required
                   />
                 </div>
-                {message && <div className="text-green-600 text-sm text-center">{message}</div>}
+                <div className="space-y-2">
+                  <Label htmlFor="confirmPassword">Confirm New Password</Label>
+                  <Input
+                    id="confirmPassword"
+                    type="password"
+                    value={confirmPassword}
+                    onChange={e => setConfirmPassword(e.target.value)}
+                    placeholder="Confirm new password"
+                    required
+                  />
+                </div>
+                {error && <div className="text-red-600 text-sm text-center">{error}</div>}
+                {success && <div className="text-green-600 text-sm text-center">{success}</div>}
                 <Button type="submit" className="w-full bg-teal-600 hover:bg-teal-700" disabled={isLoading}>
                   {isLoading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
-                  Send reset link
+                  Reset Password
                 </Button>
               </form>
             </CardContent>
@@ -108,4 +132,4 @@ export default function ForgotPasswordPage() {
       </footer>
     </div>
   )
-}
+} 

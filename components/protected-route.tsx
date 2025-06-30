@@ -1,34 +1,27 @@
 "use client"
 
-import type React from "react"
-
-import { AuthProvider, useAuth } from "@/lib/auth";
+import { useApp } from "@/contexts/AppContext"
 import { useRouter } from "next/navigation"
 import { useEffect } from "react"
-import { Loader2 } from "lucide-react"
 
 interface ProtectedRouteProps {
   children: React.ReactNode
-  redirectTo?: string
 }
 
-export function ProtectedRoute({ children, redirectTo = "/login" }: ProtectedRouteProps) {
-  const { user, isLoading } = useAuth()
+export function ProtectedRoute({ children }: ProtectedRouteProps) {
+  const { user, loading } = useApp()
   const router = useRouter()
 
   useEffect(() => {
-    if (!isLoading && !user) {
-      router.push(redirectTo)
+    if (!loading && !user) {
+      router.push("/login")
     }
-  }, [user, isLoading, router, redirectTo])
+  }, [user, loading, router])
 
-  if (isLoading) {
+  if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center">
-        <div className="text-center">
-          <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4" />
-          <p className="text-muted-foreground">Loading...</p>
-        </div>
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
       </div>
     )
   }

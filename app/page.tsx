@@ -5,6 +5,15 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 import {
   Play,
   MessageCircle,
@@ -19,10 +28,20 @@ import {
   Menu,
   X,
 } from "lucide-react"
+import { useApp } from "@/contexts/AppContext"
 
 export default function HomePage() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [currentTestimonial, setCurrentTestimonial] = useState(0)
+  const { user, logout } = useApp()
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+    } catch (error) {
+      console.error('Logout failed:', error);
+    }
+  };
 
   const testimonials = [
     {
@@ -128,12 +147,58 @@ export default function HomePage() {
               <Link href="/about" className="nav-link">
                 About
               </Link>
-              <Link href="/login" className="nav-link">
-                Sign In
-              </Link>
-              <Link href="/signup">
-                <Button className="btn-primary">Get Started</Button>
-              </Link>
+              
+              {user ? (
+                // User is signed in - show user menu
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+                      <Avatar className="h-8 w-8">
+                        <AvatarImage src={user?.avatar || ""} alt={user?.fullName || "User Avatar"} />
+                        <AvatarFallback>{user?.fullName?.charAt(0).toUpperCase() || "U"}</AvatarFallback>
+                      </Avatar>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent className="w-56" align="end" forceMount>
+                    <DropdownMenuLabel className="font-normal">
+                      <div className="flex flex-col space-y-1">
+                        <p className="text-sm font-medium leading-none">{user?.fullName || "User Name"}</p>
+                        <p className="text-xs leading-none text-muted-foreground">{user?.email || "user@example.com"}</p>
+                      </div>
+                    </DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem>
+                      <Link href="/dashboard" className="flex items-center space-x-2">
+                        Dashboard
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem>
+                      <Link href="/profile" className="flex items-center space-x-2">
+                        Profile
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem>
+                      <Link href="/settings" className="flex items-center space-x-2">
+                        Settings
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={handleLogout}>
+                      <span>Log out</span>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              ) : (
+                // User is not signed in - show auth buttons
+                <>
+                  <Link href="/login" className="nav-link">
+                    Sign In
+                  </Link>
+                  <Link href="/signup">
+                    <Button className="btn-primary">Get Started</Button>
+                  </Link>
+                </>
+              )}
             </div>
 
             {/* Mobile Menu Button */}
@@ -159,12 +224,44 @@ export default function HomePage() {
               <Link href="/about" className="block nav-link">
                 About
               </Link>
-              <Link href="/login" className="block nav-link">
-                Sign In
-              </Link>
-              <Link href="/signup" className="block">
-                <Button className="btn-primary w-full">Get Started</Button>
-              </Link>
+              
+              {user ? (
+                // User is signed in - show user info and dashboard link
+                <div className="space-y-4">
+                  <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
+                    <Avatar className="h-8 w-8">
+                      <AvatarImage src={user?.avatar || ""} alt={user?.fullName || "User Avatar"} />
+                      <AvatarFallback>{user?.fullName?.charAt(0).toUpperCase() || "U"}</AvatarFallback>
+                    </Avatar>
+                    <div>
+                      <p className="text-sm font-medium">{user?.fullName || "User Name"}</p>
+                      <p className="text-xs text-gray-500">{user?.email || "user@example.com"}</p>
+                    </div>
+                  </div>
+                  <Link href="/dashboard" className="block nav-link">
+                    Dashboard
+                  </Link>
+                  <Link href="/profile" className="block nav-link">
+                    Profile
+                  </Link>
+                  <Link href="/settings" className="block nav-link">
+                    Settings
+                  </Link>
+                  <Button onClick={handleLogout} variant="outline" className="w-full">
+                    Log out
+                  </Button>
+                </div>
+              ) : (
+                // User is not signed in - show auth buttons
+                <>
+                  <Link href="/login" className="block nav-link">
+                    Sign In
+                  </Link>
+                  <Link href="/signup" className="block">
+                    <Button className="btn-primary w-full">Get Started</Button>
+                  </Link>
+                </>
+              )}
             </div>
           </div>
         )}
@@ -191,15 +288,27 @@ export default function HomePage() {
               </div>
 
               <div className="flex flex-col sm:flex-row gap-4">
-                <Link href="/signup">
-                  <Button
-                    size="lg"
-                    className="bg-white text-purple-700 hover:bg-gray-100 font-semibold px-8 py-4 text-lg"
-                  >
-                    Start Learning Free
-                    <ChevronRight className="ml-2" size={20} />
-                  </Button>
-                </Link>
+                {user ? (
+                  <Link href="/dashboard">
+                    <Button
+                      size="lg"
+                      className="bg-white text-purple-700 hover:bg-gray-100 font-semibold px-8 py-4 text-lg"
+                    >
+                      Go to Dashboard
+                      <ChevronRight className="ml-2" size={20} />
+                    </Button>
+                  </Link>
+                ) : (
+                  <Link href="/signup">
+                    <Button
+                      size="lg"
+                      className="bg-white text-purple-700 hover:bg-gray-100 font-semibold px-8 py-4 text-lg"
+                    >
+                      Start Learning Free
+                      <ChevronRight className="ml-2" size={20} />
+                    </Button>
+                  </Link>
+                )}
                 <Link href="/demo">
                   <Button
                     size="lg"

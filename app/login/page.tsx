@@ -8,27 +8,31 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
 import { BookOpen, ArrowLeft, Eye, Loader2 } from "lucide-react"
-import { AuthProvider, useAuth } from "@/lib/auth";
+import { useApp } from "@/contexts/AppContext";
 import { useRouter } from "next/navigation"
 import { useState } from "react"
 
 export default function LoginPage() {
-  const [email, setEmail] = useState("student@arabicai.com")
-  const [password, setPassword] = useState("password123")
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState("")
-  const { login, isLoading } = useAuth()
+  const [isLoading, setIsLoading] = useState(false)
+  const { login } = useApp()
   const router = useRouter()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError("")
+    setIsLoading(true)
 
-    const success = await login(email, password)
-    if (success) {
+    try {
+      await login({ email, password })
       router.push("/dashboard")
-    } else {
-      setError("Invalid email or password. Try: student@arabicai.com / password123")
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Invalid email or password")
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -80,7 +84,7 @@ export default function LoginPage() {
                       type="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      placeholder="student@arabicai.com"
+                      placeholder="Enter your email"
                       className="form-input"
                       required
                     />
@@ -101,7 +105,7 @@ export default function LoginPage() {
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         className="form-input pr-10"
-                        placeholder="password123"
+                        placeholder="Enter your password"
                         required
                       />
                       <Button

@@ -2,9 +2,8 @@ import type React from "react"
 import type { Metadata } from "next"
 import { Inter } from "next/font/google"
 import "./globals.css"
-import { AuthProvider } from "@/lib/auth"
-import { NotificationProvider } from "@/lib/notifications"
-import { CourseProgressProvider } from "@/lib/course-progress"
+import { AuthProvider } from "@/contexts/AuthContext"
+import { AppProvider } from "@/contexts/AppContext"
 
 const inter = Inter({
   subsets: ["latin"],
@@ -60,11 +59,9 @@ export default function RootLayout({
       </head>
       <body className={`${inter.className} font-sans antialiased`}>
         <AuthProvider>
-          <NotificationProvider>
-            <CourseProgressProvider>
-              <div id="root">{children}</div>
-            </CourseProgressProvider>
-          </NotificationProvider>
+          <AppProvider>
+            <div id="root">{children}</div>
+          </AppProvider>
         </AuthProvider>
       </body>
     </html>

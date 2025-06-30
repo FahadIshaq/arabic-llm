@@ -12,10 +12,19 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Notifications } from "@/components/notifications"
-import { AuthProvider, useAuth } from "@/lib/auth";
+import { useApp } from "@/contexts/AppContext";
 
 export function DashboardHeader() {
-  const { logout, user } = useAuth()
+  const { logout, user } = useApp()
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+    } catch (error) {
+      console.error('Logout failed:', error);
+      // You might want to show a toast notification here
+    }
+  };
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -46,15 +55,15 @@ export function DashboardHeader() {
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="relative h-8 w-8 rounded-full">
                   <Avatar className="h-8 w-8">
-                    <AvatarImage src={user?.avatar || ""} alt={user?.name || "User Avatar"} />
-                    <AvatarFallback>{user?.name?.charAt(0).toUpperCase() || "U"}</AvatarFallback>
+                    <AvatarImage src={user?.avatar || ""} alt={user?.fullName || "User Avatar"} />
+                    <AvatarFallback>{user?.fullName?.charAt(0).toUpperCase() || "U"}</AvatarFallback>
                   </Avatar>
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent className="w-56" align="end" forceMount>
                 <DropdownMenuLabel className="font-normal">
                   <div className="flex flex-col space-y-1">
-                    <p className="text-sm font-medium leading-none">{user?.name || "User Name"}</p>
+                    <p className="text-sm font-medium leading-none">{user?.fullName || "User Name"}</p>
                     <p className="text-xs leading-none text-muted-foreground">{user?.email || "user@example.com"}</p>
                   </div>
                 </DropdownMenuLabel>
@@ -70,7 +79,7 @@ export function DashboardHeader() {
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={logout}>
+                <DropdownMenuItem onClick={handleLogout}>
                   <span>Log out</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>

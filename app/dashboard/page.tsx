@@ -8,16 +8,50 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { BookOpen, MessageSquare, BookText, Award, ArrowRight, Play, Mic, Target, Clock, Flame } from "lucide-react"
 import { DashboardHeader } from "@/components/dashboard-header"
 import { ProtectedRoute } from "@/components/protected-route"
-import { useNotifications } from "@/lib/notifications"
+import { useApp } from "@/contexts/AppContext"
 import { useEffect } from "react"
 
 export default function DashboardPage() {
-  const { addNotification } = useNotifications()
+  const { 
+    user, 
+    courses, 
+    coursesLoading, 
+    getEnrolledCourses,
+    stats,
+    progress,
+    getCompletionPercentage,
+    addLocalNotification
+  } = useApp()
 
   // Update last study time when user visits dashboard
   useEffect(() => {
     localStorage.setItem("arabicai_last_study", new Date().toISOString())
   }, [])
+
+  // Fetch enrolled courses when component mounts
+  useEffect(() => {
+    if (user) {
+      getEnrolledCourses()
+    }
+  }, [user, getEnrolledCourses])
+
+  if (!user) {
+    return null
+  }
+
+  // Calculate current course progress
+  const currentCourse = courses[0] // Get the first enrolled course
+  const currentCourseProgress = currentCourse ? getCompletionPercentage(currentCourse.id, currentCourse.lessonsCount) : 0
+
+  // Get current lesson progress
+  const currentLessonProgress = currentCourse ? progress.find(p => p.courseId === currentCourse.id && !p.completed) : null
+
+  // Format study time
+  const formatStudyTime = (minutes: number) => {
+    const hours = Math.floor(minutes / 60)
+    const mins = minutes % 60
+    return hours > 0 ? `${hours}h ${mins}m` : `${mins}m`
+  }
 
   return (
     <ProtectedRoute>
@@ -31,18 +65,18 @@ export default function DashboardPage() {
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                 <div>
                   <h1 className="text-3xl md:text-4xl font-bold mb-2">
-                    <span className="gradient-text">مرحباً</span>, Ahmed! 👋
+                    <span className="gradient-text">مرحباً</span>, {user.firstName}! 👋
                   </h1>
                   <p className="text-lg text-gray-600">Ready to continue your Arabic learning journey?</p>
                 </div>
                 <div className="flex items-center gap-6">
                   <div className="flex items-center gap-2 bg-orange-100 px-4 py-2 rounded-full">
                     <Flame className="h-5 w-5 text-orange-600" />
-                    <span className="font-semibold text-orange-700">7 day streak</span>
+                    <span className="font-semibold text-orange-700">{user.streakDays} day streak</span>
                   </div>
                   <div className="flex items-center gap-2 bg-purple-100 px-4 py-2 rounded-full">
                     <Award className="h-5 w-5 text-purple-600" />
-                    <span className="font-semibold text-purple-700">Level 3</span>
+                    <span className="font-semibold text-purple-700">Level {user.level}</span>
                   </div>
                 </div>
               </div>
@@ -55,9 +89,13 @@ export default function DashboardPage() {
                     <BookOpen className="h-4 w-4 text-purple-600" />
                   </CardHeader>
                   <CardContent>
-                    <div className="text-2xl font-bold gradient-text">12/25</div>
-                    <p className="text-xs text-gray-600 mt-1">48% of beginner course</p>
-                    <Progress value={48} className="mt-3 h-2" />
+                    <div className="text-2xl font-bold gradient-text">
+                      {stats?.totalLessonsCompleted || 0}
+                    </div>
+                    <p className="text-xs text-gray-600 mt-1">
+                      {currentCourse ? `${currentCourseProgress}% of ${currentCourse.title}` : 'No active course'}
+                    </p>
+                    <Progress value={currentCourseProgress} className="mt-3 h-2" />
                   </CardContent>
                 </Card>
 
@@ -67,19 +105,23 @@ export default function DashboardPage() {
                     <MessageSquare className="h-4 w-4 text-teal-600" />
                   </CardHeader>
                   <CardContent>
-                    <div className="text-2xl font-bold text-teal-600">18</div>
-                    <p className="text-xs text-gray-600 mt-1">5 this week</p>
+                    <div className="text-2xl font-bold text-teal-600">
+                      {stats?.aiConversations || 0}
+                    </div>
+                    <p className="text-xs text-gray-600 mt-1">
+                      {stats?.conversationsThisWeek || 0} this week
+                    </p>
                   </CardContent>
                 </Card>
 
                 <Card className="lesson-card card-hover">
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">Vocabulary Mastered</CardTitle>
+                    <CardTitle className="text-sm font-medium">Total Points</CardTitle>
                     <BookText className="h-4 w-4 text-orange-600" />
                   </CardHeader>
                   <CardContent>
-                    <div className="text-2xl font-bold text-orange-600">127</div>
-                    <p className="text-xs text-gray-600 mt-1">23 words this week</p>
+                    <div className="text-2xl font-bold text-orange-600">{user.totalPoints}</div>
+                    <p className="text-xs text-gray-600 mt-1">Keep learning to earn more!</p>
                   </CardContent>
                 </Card>
 
@@ -89,8 +131,12 @@ export default function DashboardPage() {
                     <Clock className="h-4 w-4 text-pink-600" />
                   </CardHeader>
                   <CardContent>
-                    <div className="text-2xl font-bold text-pink-600">4.2h</div>
-                    <p className="text-xs text-gray-600 mt-1">45m today</p>
+                    <div className="text-2xl font-bold text-pink-600">
+                      {stats?.totalStudyTime ? formatStudyTime(stats.totalStudyTime) : '0m'}
+                    </div>
+                    <p className="text-xs text-gray-600 mt-1">
+                      {stats?.studyTimeToday ? formatStudyTime(stats.studyTimeToday) : '0m'} today
+                    </p>
                   </CardContent>
                 </Card>
               </div>
@@ -108,31 +154,47 @@ export default function DashboardPage() {
                     </CardHeader>
                     <CardContent className="space-y-6">
                       {/* Current Lesson */}
-                      <div className="bg-gradient-to-r from-purple-50 to-teal-50 rounded-2xl p-6 border border-purple-200">
-                        <div className="flex items-start gap-4">
-                          <div className="w-16 h-16 bg-gradient-to-r from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center text-white">
-                            <BookOpen className="h-8 w-8" />
-                          </div>
-                          <div className="flex-1 space-y-3">
-                            <div className="flex items-center justify-between">
-                              <h3 className="text-xl font-semibold">Lesson 13: Family & Relationships</h3>
-                              <span className="text-sm text-gray-600 bg-white px-3 py-1 rounded-full">
-                                65% complete
-                              </span>
+                      {currentCourse && currentLessonProgress ? (
+                        <div className="bg-gradient-to-r from-purple-50 to-teal-50 rounded-2xl p-6 border border-purple-200">
+                          <div className="flex items-start gap-4">
+                            <div className="w-16 h-16 bg-gradient-to-r from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center text-white">
+                              <BookOpen className="h-8 w-8" />
                             </div>
-                            <Progress value={65} className="h-3" />
-                            <p className="text-gray-600">
-                              Learn vocabulary for family members and practice describing relationships in Arabic.
-                            </p>
-                            <Link href="/lessons/13">
+                            <div className="flex-1 space-y-3">
+                              <div className="flex items-center justify-between">
+                                <h3 className="text-xl font-semibold">{currentCourse.title}</h3>
+                                <span className="text-sm text-gray-600 bg-white px-3 py-1 rounded-full">
+                                  {currentCourseProgress}% complete
+                                </span>
+                              </div>
+                              <Progress value={currentCourseProgress} className="h-3" />
+                              <p className="text-gray-600">
+                                Continue your learning journey with {currentCourse.title}
+                              </p>
+                              <Link href={`/courses/${currentCourse.id}`}>
+                                <Button className="btn-primary">
+                                  Continue Course
+                                  <ArrowRight className="ml-2 h-4 w-4" />
+                                </Button>
+                              </Link>
+                            </div>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="bg-gradient-to-r from-gray-50 to-gray-100 rounded-2xl p-6 border border-gray-200">
+                          <div className="text-center space-y-4">
+                            <BookOpen className="h-12 w-12 text-gray-400 mx-auto" />
+                            <h3 className="text-xl font-semibold text-gray-600">No Active Course</h3>
+                            <p className="text-gray-500">Start your Arabic learning journey by enrolling in a course</p>
+                            <Link href="/courses">
                               <Button className="btn-primary">
-                                Continue Lesson
+                                Browse Courses
                                 <ArrowRight className="ml-2 h-4 w-4" />
                               </Button>
                             </Link>
                           </div>
                         </div>
-                      </div>
+                      )}
 
                       {/* Quick Actions */}
                       <div className="grid gap-4 md:grid-cols-2">
@@ -144,7 +206,7 @@ export default function DashboardPage() {
                             <h3 className="font-semibold">Practice Conversation</h3>
                           </div>
                           <p className="text-sm text-gray-600 mb-4">
-                            Practice speaking with our AI tutor about family topics
+                            Practice speaking with our AI tutor
                           </p>
                           <Link href="/practice">
                             <Button variant="outline" size="sm" className="w-full">
@@ -173,140 +235,84 @@ export default function DashboardPage() {
                     </CardContent>
                   </Card>
 
-                  {/* Recommended for You */}
+                  {/* Enrolled Courses */}
                   <Card className="lesson-card">
                     <CardHeader>
-                      <CardTitle>Recommended for You</CardTitle>
-                      <CardDescription>Based on your progress and interests</CardDescription>
+                      <CardTitle>Your Courses</CardTitle>
+                      <CardDescription>Courses you're currently enrolled in</CardDescription>
                     </CardHeader>
                     <CardContent>
-                      <div className="grid gap-4 md:grid-cols-3">
-                        <div className="bg-white rounded-xl p-4 border border-gray-200 hover:border-purple-300 transition-colors">
-                          <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-purple-600 rounded-xl flex items-center justify-center mb-3">
-                            <BookOpen className="h-6 w-6 text-white" />
-                          </div>
-                          <h3 className="font-semibold mb-2">Numbers & Counting</h3>
-                          <p className="text-sm text-gray-600 mb-3">Master Arabic numbers from 1-100</p>
-                          <Link href="/lessons/numbers">
-                            <Button variant="outline" size="sm" className="w-full">
-                              Start Lesson
+                      {coursesLoading ? (
+                        <div className="text-center py-8">
+                          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600 mx-auto"></div>
+                          <p className="text-gray-600 mt-4">Loading your courses...</p>
+                        </div>
+                      ) : courses.length > 0 ? (
+                        <div className="space-y-4">
+                          {courses.map((course) => {
+                            const courseProgress = getCompletionPercentage(course.id, course.lessonsCount)
+                            return (
+                              <div key={course.id} className="flex items-center gap-4 p-4 border rounded-lg">
+                                <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-teal-500 rounded-lg flex items-center justify-center">
+                                  <BookOpen className="h-6 w-6 text-white" />
+                                </div>
+                                <div className="flex-1">
+                                  <h3 className="font-semibold">{course.title}</h3>
+                                  <p className="text-sm text-gray-600">{course.description}</p>
+                                  <div className="flex items-center gap-4 mt-2">
+                                    <Progress value={courseProgress} className="flex-1 h-2" />
+                                    <span className="text-sm text-gray-600">{courseProgress}%</span>
+                                  </div>
+                                </div>
+                                <Link href={`/courses/${course.id}`}>
+                                  <Button size="sm" variant="outline">
+                                    Continue
+                                  </Button>
+                                </Link>
+                              </div>
+                            )
+                          })}
+                        </div>
+                      ) : (
+                        <div className="text-center py-8">
+                          <BookOpen className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                          <h3 className="text-lg font-semibold text-gray-600 mb-2">No Enrolled Courses</h3>
+                          <p className="text-gray-500 mb-4">Start your Arabic learning journey by enrolling in a course</p>
+                          <Link href="/courses">
+                            <Button className="btn-primary">
+                              Browse Courses
                             </Button>
                           </Link>
                         </div>
-
-                        <div className="bg-white rounded-xl p-4 border border-gray-200 hover:border-teal-300 transition-colors">
-                          <div className="w-12 h-12 bg-gradient-to-r from-teal-500 to-teal-600 rounded-xl flex items-center justify-center mb-3">
-                            <MessageSquare className="h-6 w-6 text-white" />
-                          </div>
-                          <h3 className="font-semibold mb-2">Restaurant Dialogue</h3>
-                          <p className="text-sm text-gray-600 mb-3">Practice ordering food in Arabic</p>
-                          <Link href="/practice/restaurant">
-                            <Button variant="outline" size="sm" className="w-full">
-                              Practice
-                            </Button>
-                          </Link>
-                        </div>
-
-                        <div className="bg-white rounded-xl p-4 border border-gray-200 hover:border-orange-300 transition-colors">
-                          <div className="w-12 h-12 bg-gradient-to-r from-orange-500 to-orange-600 rounded-xl flex items-center justify-center mb-3">
-                            <Play className="h-6 w-6 text-white" />
-                          </div>
-                          <h3 className="font-semibold mb-2">Cultural Stories</h3>
-                          <p className="text-sm text-gray-600 mb-3">Learn through Arabic folktales</p>
-                          <Link href="/stories">
-                            <Button variant="outline" size="sm" className="w-full">
-                              Watch
-                            </Button>
-                          </Link>
-                        </div>
-                      </div>
+                      )}
                     </CardContent>
                   </Card>
                 </div>
 
-                {/* Sidebar */}
+                {/* Recent Activity & Achievements */}
                 <div className="space-y-6">
-                  {/* Recent Vocabulary */}
+                  {/* Recent Activity */}
                   <Card className="lesson-card">
                     <CardHeader>
-                      <CardTitle className="text-lg">Recent Vocabulary</CardTitle>
-                      <CardDescription>Words you've learned recently</CardDescription>
+                      <CardTitle>Recent Activity</CardTitle>
                     </CardHeader>
                     <CardContent>
-                      <Tabs defaultValue="all" className="w-full">
-                        <TabsList className="grid w-full grid-cols-3 mb-4">
-                          <TabsTrigger value="all" className="text-xs">
-                            All
-                          </TabsTrigger>
-                          <TabsTrigger value="new" className="text-xs">
-                            New
-                          </TabsTrigger>
-                          <TabsTrigger value="review" className="text-xs">
-                            Review
-                          </TabsTrigger>
-                        </TabsList>
-                        <TabsContent value="all" className="space-y-3">
-                          <div className="space-y-3">
-                            {[
-                              { arabic: "عائلة", english: "Family", mastered: true },
-                              { arabic: "أب", english: "Father", mastered: true },
-                              { arabic: "أم", english: "Mother", mastered: false },
-                              { arabic: "أخ", english: "Brother", mastered: false },
-                              { arabic: "أخت", english: "Sister", mastered: true },
-                            ].map((word, index) => (
-                              <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                                <div>
-                                  <p className="font-arabic text-lg font-medium">{word.arabic}</p>
-                                  <p className="text-sm text-gray-600">{word.english}</p>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                  {word.mastered && <div className="w-2 h-2 bg-green-500 rounded-full"></div>}
-                                  <Button variant="ghost" size="icon" className="h-8 w-8">
-                                    <Play className="h-4 w-4" />
-                                  </Button>
-                                </div>
+                      <div className="space-y-4">
+                        {stats?.recentActivity ? (
+                          stats.recentActivity.map((activity: any, index: number) => (
+                            <div key={index} className="flex items-center gap-3">
+                              <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
+                              <div className="flex-1">
+                                <p className="text-sm font-medium">{activity.title}</p>
+                                <p className="text-xs text-gray-600">{activity.time}</p>
                               </div>
-                            ))}
+                            </div>
+                          ))
+                        ) : (
+                          <div className="text-center py-4">
+                            <p className="text-gray-500 text-sm">No recent activity</p>
                           </div>
-                          <Link href="/vocabulary">
-                            <Button variant="link" className="w-full text-purple-600">
-                              View all vocabulary →
-                            </Button>
-                          </Link>
-                        </TabsContent>
-                      </Tabs>
-                    </CardContent>
-                  </Card>
-
-                  {/* Weekly Goal */}
-                  <Card className="lesson-card">
-                    <CardHeader>
-                      <CardTitle className="text-lg">Weekly Goal</CardTitle>
-                      <CardDescription>Keep up the great work!</CardDescription>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
-                      <div className="text-center">
-                        <div className="text-3xl font-bold gradient-text mb-2">5/7</div>
-                        <p className="text-sm text-gray-600">Days completed this week</p>
-                      </div>
-                      <Progress value={71} className="h-3" />
-                      <div className="flex justify-between text-sm text-gray-600">
-                        <span>280 minutes</span>
-                        <span>Goal: 350 min</span>
-                      </div>
-                      <div className="grid grid-cols-7 gap-1">
-                        {["M", "T", "W", "T", "F", "S", "S"].map((day, index) => (
-                          <div
-                            key={index}
-                            className={`h-8 rounded flex items-center justify-center text-xs font-medium ${
-                              index < 5
-                                ? "bg-gradient-to-r from-purple-500 to-teal-500 text-white"
-                                : "bg-gray-200 text-gray-600"
-                            }`}
-                          >
-                            {day}
-                          </div>
-                        ))}
+                        )}
                       </div>
                     </CardContent>
                   </Card>
@@ -314,26 +320,28 @@ export default function DashboardPage() {
                   {/* Achievements */}
                   <Card className="lesson-card">
                     <CardHeader>
-                      <CardTitle className="text-lg">Recent Achievements</CardTitle>
+                      <CardTitle>Achievements</CardTitle>
                     </CardHeader>
-                    <CardContent className="space-y-3">
-                      <div className="flex items-center gap-3 p-3 bg-gradient-to-r from-orange-50 to-orange-100 rounded-lg">
-                        <div className="w-10 h-10 bg-orange-500 rounded-full flex items-center justify-center">
-                          <Flame className="h-5 w-5 text-white" />
-                        </div>
-                        <div>
-                          <p className="font-medium">Week Warrior</p>
-                          <p className="text-xs text-gray-600">7-day learning streak</p>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-3 p-3 bg-gradient-to-r from-purple-50 to-purple-100 rounded-lg">
-                        <div className="w-10 h-10 bg-purple-500 rounded-full flex items-center justify-center">
-                          <BookText className="h-5 w-5 text-white" />
-                        </div>
-                        <div>
-                          <p className="font-medium">Vocabulary Master</p>
-                          <p className="text-xs text-gray-600">100+ words learned</p>
-                        </div>
+                    <CardContent>
+                      <div className="space-y-4">
+                        {stats?.achievements ? (
+                          stats.achievements.map((achievement: any, index: number) => (
+                            <div key={index} className="flex items-center gap-3">
+                              <div className="w-8 h-8 bg-yellow-100 rounded-full flex items-center justify-center">
+                                <Award className="h-4 w-4 text-yellow-600" />
+                              </div>
+                              <div className="flex-1">
+                                <p className="text-sm font-medium">{achievement.title}</p>
+                                <p className="text-xs text-gray-600">{achievement.description}</p>
+                              </div>
+                            </div>
+                          ))
+                        ) : (
+                          <div className="text-center py-4">
+                            <Award className="h-8 w-8 text-gray-400 mx-auto mb-2" />
+                            <p className="text-gray-500 text-sm">Complete lessons to earn achievements</p>
+                          </div>
+                        )}
                       </div>
                     </CardContent>
                   </Card>
