@@ -4,6 +4,7 @@ import { Inter } from "next/font/google"
 import "./globals.css"
 import { AuthProvider } from "@/contexts/AuthContext"
 import { AppProvider } from "@/contexts/AppContext"
+import { NotificationProvider } from "@/lib/notifications"
 
 const inter = Inter({
   subsets: ["latin"],
@@ -35,9 +36,10 @@ export const metadata: Metadata = {
     description: "Master Arabic with our AI-powered language learning platform",
     creator: "@arabicai",
   },
-  viewport: "width=device-width, initial-scale=1, maximum-scale=1",
-    generator: 'v0.dev'
+  generator: 'v0.dev'
 }
+
+export const viewport = "width=device-width, initial-scale=1, maximum-scale=1"
 
 export default function RootLayout({
   children,
@@ -60,7 +62,9 @@ export default function RootLayout({
       <body className={`${inter.className} font-sans antialiased`}>
         <AuthProvider>
           <AppProvider>
-            <div id="root">{children}</div>
+            <NotificationProvider>
+              <div id="root">{children}</div>
+            </NotificationProvider>
           </AppProvider>
         </AuthProvider>
       </body>
